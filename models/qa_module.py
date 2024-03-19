@@ -143,6 +143,7 @@ class ScanQA(nn.Module):
         )
 
         # Scene Encoder
+        #torch.randn()随机化一个张量，这里即为类别标记，nn.parameter()把设置为模型参数，随优化器更新
         self.cls_token = nn.Parameter(torch.randn(1, 1, SCENE_ENC_EMB_DIM))
         self.scene_encoder = nn.TransformerEncoder(nn.TransformerEncoderLayer(d_model=SCENE_ENC_EMB_DIM,
                                                                               nhead=SCENE_ENC_N_HEADS),
@@ -236,7 +237,9 @@ class ScanQA(nn.Module):
 
         # Scene Encoder
         batch_size = object_feat.shape[0]
+        #类别标记在批处理维度上重复，添加类别标记到对象特征中
         cls_tokens = repeat(self.cls_token, '1 1 d -> b 1 d', b=batch_size)
+        #类别标记作为全局信息和对象特征拼接
         object_feat = torch.cat((cls_tokens, object_feat), dim=1)
         object_feat = self.scene_encoder(object_feat)
         object_feat = self.scene_feat_linear(object_feat)  # batch_size, num_proposal, hidden_size
