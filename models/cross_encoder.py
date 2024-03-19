@@ -16,6 +16,7 @@ class Sem_Encoder(nn.Module):
                  num_heads: int = 8,
                  num_layers: int = 3,
                  pdrop: float = 0.1):
+        #调用父类nn.Module的初始化函数
         super(Sem_Encoder, self).__init__()
         self.co_attention_encoder = nn.TransformerEncoder(torch.nn.TransformerEncoderLayer(d_model=hidden_size,
                                                                                            nhead=num_heads,
@@ -30,6 +31,7 @@ class Sem_Encoder(nn.Module):
                 lang_mask: torch.Tensor,
                 obj_mask: torch.Tensor
                 ) -> Tuple[torch.Tensor, torch.Tensor]:
+        #获取序列长度
         NS = obj_rep.shape[1]
         NL = lang_rep.shape[1]
 
@@ -40,10 +42,13 @@ class Sem_Encoder(nn.Module):
 
         # <B, NS+NL, C=256>
         co_attention_output = self.co_attention_encoder(rep_all, src_key_padding_mask=padding_mask_all)
+        #第NL个位置开始到最后
         scene_hidden_states = co_attention_output[:, NL:, :]  # <B, NS, C=256>
+        #第1个位置开始到第NL-1个位置
         lang_hidden_states = co_attention_output[:, 0:NL, :]
 
         # post process
+        #语言隐藏状态第一个时间步特征作为语言特征
         lang_feature = lang_hidden_states[:, 0, :]
 
         return lang_feature, scene_hidden_states  # output
