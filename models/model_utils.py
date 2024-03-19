@@ -29,6 +29,7 @@ def get_num_params(model: nn.Module):
     return num_params
 
 
+#打印模型状态字典各个参数形状信息（即维度大小）
 def _print_state_dict_shapes(state_dict: OrderedDict[str, torch.Tensor]) -> None:
     """
     Prints Shapes of State Dict parameters
