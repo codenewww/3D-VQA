@@ -1,3 +1,5 @@
+#PCD 文件是点云数据（Point Cloud Data）的一种常见格式，用于存储三维点云数据。它是由 Point Cloud Library (PCL) 定义的一种简单文本格式，
+#也支持二进制格式。PCD 文件通常包含点的坐标信息以及可能的其他属性，如法向量、颜色等。
 import os, sys, re
 import argparse
 from tqdm import tqdm
