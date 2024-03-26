@@ -174,6 +174,8 @@ class PretrainNet(nn.Module):
         cls_tokens = repeat(self.cls_token, '1 1 d -> b 1 d', b=batch_size)
         object_feat = torch.cat((cls_tokens, object_feat), dim=1)
 
+        #使用 [:, 0] 对编码后的结果进行索引，只选择每个样本的第一个 token。这是因为在 Transformer 编码器中，
+        #第一个 token 通常是一个特殊的 <cls> token，它包含了整个序列的语义信息。
         scene_rep = self.scene_head(self.scene_encoder(object_feat)[:, 0])  # Only cls_token
 
         #######################################
