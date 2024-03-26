@@ -207,6 +207,7 @@ def get_scanrefer(scanrefer_train,
     return new_scanrefer_train, new_scanrefer_val, all_scene_list
 
 
+#返回值包含训练集、验证集中每张图片的文件名（不带扩展名 .jpg）和对应的完整文件路径。
 def get_topdownimgs() -> Tuple[Dict[str, str], Dict[str, str]]:
     """
     Load Top-Down Images
@@ -240,15 +241,19 @@ def pretrain(args: argparse):
 
     # Init train images
     try:
+        #加载预训练模型，这个模型通常是一个 Transformer 编码器，用于对图像和文本进行编码，常用于视觉文本检索等任务。
+        #jit=False 参数表示不使用 TorchScript 加载模型，这对训练来说是必需的
         clip_model, clip_preprocess = clip.load("ViT-B/32", device='cuda', jit=False)  # Must set jit=False for training
     except:
         # In case your machine doesn't have access to the internet: Use cached weights
         clip_model, clip_preprocess = clip.load(os.path.join(CONF.PATH.DATA, "..", "ViT-B-32.pt"),
                                                 device='cuda',
                                                 jit=False)
+    #模型被用于推理而不是训练
     clip_model.eval()
 
     # Freeze CLIP
+    #因为clip被用作特征提取器，而不用于微调
     for p in clip_model.parameters():
         p.requires_grad = False
 
